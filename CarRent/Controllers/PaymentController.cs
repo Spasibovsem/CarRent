@@ -4,6 +4,7 @@ using System.Linq;
 using Data;
 using Data.Models;
 using Data.Repo;
+using CarRent.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace CarRent.Controllers
 
         [HttpPost]
         [Route("[Action]")]
-        public IActionResult AddPayment(Payment model)
+        public IActionResult AddPayment([FromQuery] Payment model)
         {
             _repository.Insert(model);
             _repository.Save();
@@ -63,6 +64,17 @@ namespace CarRent.Controllers
             else return BadRequest();
 
             return Ok();
+        }
+        [HttpGet]
+        [Route("[Action]/{id}")]
+        public PaySumModel GetPaySum(int id)
+        {
+            var obj = new PaySumModel
+            {
+                CarId = id,
+                PaymentSum = _repository.FindAll().Where(p => p.CarId == id).Sum(p => p.PaySum)
+            };
+            return obj;
         }
     }
 }

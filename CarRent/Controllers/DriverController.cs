@@ -30,7 +30,7 @@ namespace CarRent.Controllers
 
         [HttpPost]
         [Route("[Action]")]
-        public IActionResult AddDriver(Driver model)
+        public IActionResult AddDriver([FromQuery]Driver model)
         {
             _repository.Insert(model);
             _repository.Save();
@@ -55,8 +55,7 @@ namespace CarRent.Controllers
             {
                 obj.Name = model.Name;
                 obj.StartDate = model.StartDate;
-                obj.RetireDate = model.RetireDate
-                    ;
+                obj.RetireDate = model.RetireDate;
                 obj.CarId = model.CarId;
                 _repository.Update(obj);
                 _repository.Save();

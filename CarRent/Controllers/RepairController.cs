@@ -30,7 +30,7 @@ namespace CarRent.Controllers
 
         [HttpPost]
         [Route("[Action]")]
-        public IActionResult AddRepair(Repair model)
+        public IActionResult AddRepair([FromQuery]Repair model)
         {
             _repository.Insert(model);
             _repository.Save();
