@@ -21,7 +21,7 @@ namespace Data.Repo
         {
             return _dbSet.ToList();
         }
-        public T FindById(object id)
+        public T FindById(int id)
         {
             return _dbSet.Find(id);
         }

@@ -7,7 +7,7 @@ namespace Data.Repo
     public interface IGenericRepository<T> where T : class 
     {
         IEnumerable<T> FindAll();
-        T FindById(object id);
+        T FindById(int id);
         void Insert(T obj);
         void Update(T obj);
         void Delete(T obj);

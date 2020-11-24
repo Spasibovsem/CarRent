@@ -67,14 +67,38 @@ namespace CarRent.Controllers
         }
         [HttpGet]
         [Route("[Action]/{id}")]
-        public PaySumModel GetPaySum(int id)
+        public PaySumModel GetPaySumByCar(int id)
         {
-            var obj = new PaySumModel
+            return new PaySumModel
             {
                 CarId = id,
+                DriverId = null,
                 PaymentSum = _repository.FindAll().Where(p => p.CarId == id).Sum(p => p.PaySum)
             };
-            return obj;
+        }
+
+        [HttpGet]
+        [Route("[Action]/{id}")]
+        public PaySumModel GetPaySumByDriver(int id)
+        {
+            return new PaySumModel
+            {
+                DriverId = id,
+                CarId = id,
+                PaymentSum = _repository.FindAll().Where(p => p.DriverId == id).Sum(p => p.PaySum)
+            };
+        }
+
+        [HttpGet]
+        [Route("[Action]/{id}")]
+        public PaySumModel GetPaySumByDriverCar(int _carId, int _driverId)
+        {
+            return new PaySumModel
+            {
+                CarId = _carId,
+                DriverId = _driverId,
+                PaymentSum = _repository.FindAll().Where(p => p.CarId == _carId && p.DriverId == _driverId).Sum(p => p.PaySum)
+            };
         }
     }
 }

@@ -7,7 +7,8 @@ namespace CarRent.Models
 {
     public class PaySumModel
     {
-        public int CarId { get; set; }
+        public int? CarId { get; set; }
+        public int? DriverId { get; set; }
         public int PaymentSum { get; set; }
     }
 }
