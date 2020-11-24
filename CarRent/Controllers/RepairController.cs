@@ -4,6 +4,7 @@ using System.Linq;
 using Data;
 using Data.Models;
 using Data.Repo;
+using CarRent.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace CarRent.Controllers
 
         [HttpPost]
         [Route("[Action]")]
-        public IActionResult AddRepair([FromQuery]Repair model)
+        public IActionResult AddRepair([FromQuery] Repair model)
         {
             _repository.Insert(model);
             _repository.Save();
@@ -63,6 +64,17 @@ namespace CarRent.Controllers
             _repository.DeleteById(id);
             _repository.Save();
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("[Action]/{id}")]
+        public RepairSumModel GetRepairSumByCar(int id)
+        {
+            return new RepairSumModel
+            {
+                CarId = id,
+                RepairSum = _repository.FindAll().Where(r => r.CarId == id).Sum(r => r.RepairPrice)
+            };
         }
     }
 }
