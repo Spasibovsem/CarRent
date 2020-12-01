@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Data;
 using Data.Repo;
 using Data.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,8 +30,10 @@ namespace CarRent
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = Configuration.GetConnectionString("DefaultConnection");
+            
             services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<CarRentContext>(options => 
                 options.UseSqlServer(connection));
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

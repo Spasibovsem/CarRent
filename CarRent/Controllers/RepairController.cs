@@ -8,6 +8,8 @@ using CarRent.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+using CarRent.Models;
 
 namespace CarRent.Controllers
 {
@@ -16,42 +18,42 @@ namespace CarRent.Controllers
     public class RepairController : ControllerBase
     {
         private readonly IGenericRepository<Repair> _repository;
+        private readonly IMapper _mapper;
 
-        public RepairController(IGenericRepository<Repair> repository)
+        public RepairController(IGenericRepository<Repair> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("[Action]/{id}")]
-        public IEnumerable<Repair> GetRepairsByCarId(int id)
+        public IEnumerable<RepairModel> GetRepairsByCarId(int id)
         {
-            return _repository.FindAll().Where(r => r.CarId == id);
+            return _mapper.Map<List<RepairModel>>(_repository.FindAll().Where(r => r.CarId == id));
         }
 
         [HttpPost]
         [Route("[Action]")]
-        public IActionResult AddRepair([FromQuery] Repair model)
+        public IActionResult AddRepair([FromQuery] RepairModel model)
         {
-            _repository.Insert(model);
-            _repository.Save();
+            _repository.Insert(_mapper.Map<Repair>(model));
             return Ok();
         }
 
         [HttpPut]
-        [Route("[Action]/{id}")]
-        public IActionResult UpdateRepair(int id, [FromQuery] Repair model)
+        [Route("[Action]")]
+        public IActionResult UpdateRepair([FromQuery] RepairModel model)
         {
-            var obj = _repository.FindById(id);
-            if (obj != null)
+            if(ModelState.IsValid)
             {
+                var obj = _repository.FindById(model.Id);
                 obj.Title = model.Title;
                 obj.CarId = model.CarId;
                 obj.Mileage = model.Mileage;
                 obj.RepairDate = model.RepairDate;
                 obj.RepairPrice = model.RepairPrice;
                 _repository.Update(obj);
-                _repository.Save();
             }
             else return BadRequest();
             return Ok();
@@ -62,7 +64,6 @@ namespace CarRent.Controllers
         public IActionResult DeleteRepair(int id)
         {
             _repository.DeleteById(id);
-            _repository.Save();
             return Ok();
         }
 
