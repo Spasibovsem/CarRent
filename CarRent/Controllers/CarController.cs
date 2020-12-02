@@ -33,7 +33,10 @@ namespace CarRent.Controllers
         [Route("[Action]")]
         public IActionResult AddCar([FromQuery] CarModel model)
         {
-            _repository.Insert(_mapper.Map<Car>(model));
+            if (ModelState.IsValid)
+                _repository.Insert(_mapper.Map<Car>(model));
+            else
+                return BadRequest();
             return Ok();
         }
         [HttpDelete]

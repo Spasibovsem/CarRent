@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using CarRent.Models;
 
 namespace CarRent.Controllers
 {
@@ -37,7 +36,11 @@ namespace CarRent.Controllers
         [Route("[Action]")]
         public IActionResult AddRepair([FromQuery] RepairModel model)
         {
-            _repository.Insert(_mapper.Map<Repair>(model));
+            if (ModelState.IsValid)
+                _repository.Insert(_mapper.Map<Repair>(model));
+            else 
+                return BadRequest();
+
             return Ok();
         }
 
@@ -55,7 +58,9 @@ namespace CarRent.Controllers
                 obj.RepairPrice = model.RepairPrice;
                 _repository.Update(obj);
             }
-            else return BadRequest();
+            else
+                return BadRequest();
+
             return Ok();
         }
 

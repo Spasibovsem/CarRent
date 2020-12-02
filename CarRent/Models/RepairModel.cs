@@ -12,5 +12,6 @@ namespace CarRent.Models
         public string Mileage { get; set; }
         public int RepairPrice { get; set; }
         public DateTime RepairDate { get; set; }
+        public int CarId { get; set; }
     }
 }

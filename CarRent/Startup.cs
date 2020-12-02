@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Data;
 using Data.Repo;
+using CarRent.Services;
 using Data.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
@@ -32,11 +33,15 @@ namespace CarRent
         {
             
             services.AddControllers();
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<CarRentContext>(options => 
                 options.UseSqlServer(connection));
+
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<IPaymentService, PaymentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

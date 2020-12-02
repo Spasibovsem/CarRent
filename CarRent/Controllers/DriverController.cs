@@ -36,7 +36,11 @@ namespace CarRent.Controllers
         [Route("[Action]")]
         public IActionResult AddDriver([FromQuery]DriverModel model)
         {
-            _repository.Insert(_mapper.Map<Driver>(model));
+            if (ModelState.IsValid)
+                _repository.Insert(_mapper.Map<Driver>(model));
+            else
+                return BadRequest();
+            
             return Ok();
         }
 
