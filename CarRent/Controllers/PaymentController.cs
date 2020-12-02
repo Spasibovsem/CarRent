@@ -5,9 +5,11 @@ using Data;
 using Data.Models;
 using Data.Repo;
 using CarRent.Models;
+using CarRent.Services;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace CarRent.Controllers
 {
@@ -15,26 +17,29 @@ namespace CarRent.Controllers
     [ApiController]
     public class PaymentController : ControllerBase
     {
-        private readonly IGenericRepository<Payment> _repository;
+        private readonly IPaymentService _PaymentService;
 
-        public PaymentController(IGenericRepository<Payment> repository)
+        public PaymentController(IPaymentService payService)
         {
-            _repository = repository;
+            _PaymentService = payService;
         }
 
         [HttpGet]
         [Route("[Action]/{id}")]
-        public IEnumerable<Payment> GetPaymentsByCar(int id)
+        public IEnumerable<PaymentModel> GetPaymentsByCar(int id)
         {
-            return _repository.FindAll().Where(p => p.CarId == id);
+            return _PaymentService.PaymentsByCar(id);
         }
 
         [HttpPost]
         [Route("[Action]")]
-        public IActionResult AddPayment([FromQuery] Payment model)
+        public IActionResult AddPayment([FromQuery] PaymentModel model)
         {
-            _repository.Insert(model);
-            _repository.Save();
+            if (ModelState.IsValid)
+                _PaymentService.InsertPayment(model);
+            else
+                return BadRequest();
+            
             return Ok();
         }
 
@@ -42,26 +47,18 @@ namespace CarRent.Controllers
         [Route("[Action]/{id}")]
         public IActionResult DeletePayment(int id)
         {
-            _repository.DeleteById(id);
-            _repository.Save();
+            _PaymentService.DelPayment(id);
             return Ok();
         }
 
         [HttpPut]
         [Route("[Action]/{id}")]
-        public IActionResult UpdatePayment(int id, [FromQuery] Payment model)
-        {
-            Payment obj = _repository.FindById(id);
-            if (obj != null)
-            {
-                obj.CarId = model.CarId;
-                obj.DriverId = model.DriverId;
-                obj.PayDate = model.PayDate;
-                obj.PaySum = model.PaySum;
-                _repository.Update(obj);
-                _repository.Save();
-            }
-            else return BadRequest();
+        public IActionResult UpdatePayment([FromQuery] PaymentModel model)
+        { 
+            if(ModelState.IsValid)
+                _PaymentService.UpdPayment(model);
+            else 
+                return BadRequest();
 
             return Ok();
         }
@@ -69,36 +66,21 @@ namespace CarRent.Controllers
         [Route("[Action]/{id}")]
         public PaySumModel GetPaySumByCar(int id)
         {
-            return new PaySumModel
-            {
-                CarId = id,
-                DriverId = null,
-                PaymentSum = _repository.FindAll().Where(p => p.CarId == id).Sum(p => p.PaySum)
-            };
+            return _PaymentService.SumByCar(id);
         }
 
         [HttpGet]
         [Route("[Action]/{id}")]
         public PaySumModel GetPaySumByDriver(int id)
         {
-            return new PaySumModel
-            {
-                DriverId = id,
-                CarId = id,
-                PaymentSum = _repository.FindAll().Where(p => p.DriverId == id).Sum(p => p.PaySum)
-            };
+            return _PaymentService.SumByDriver(id);
         }
 
         [HttpGet]
-        [Route("[Action]/{id}")]
-        public PaySumModel GetPaySumByDriverCar(int _carId, int _driverId)
+        [Route("[Action]/{driverId}/{carId}")]
+        public PaySumModel GetPaySumByDriverCar(int driverId, int carId)
         {
-            return new PaySumModel
-            {
-                CarId = _carId,
-                DriverId = _driverId,
-                PaymentSum = _repository.FindAll().Where(p => p.CarId == _carId && p.DriverId == _driverId).Sum(p => p.PaySum)
-            };
+            return _PaymentService.SumByDriverCar(driverId, carId);
         }
     }
 }

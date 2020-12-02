@@ -7,6 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+using CarRent.Models;
 
 namespace CarRent.Controllers
 {
@@ -15,25 +17,30 @@ namespace CarRent.Controllers
     public class DriverController : ControllerBase
     {
         private readonly IGenericRepository<Driver> _repository;
+        private readonly IMapper _mapper;
 
-        public DriverController(IGenericRepository<Driver> repository)
+        public DriverController(IGenericRepository<Driver> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("[Action]")]
-        public IEnumerable<Driver> GetDrivers()
+        public IEnumerable<DriverModel> GetDrivers()
         {
-            return _repository.FindAll();
+            return _mapper.Map<List<DriverModel>>(_repository.FindAll());
         }
 
         [HttpPost]
         [Route("[Action]")]
-        public IActionResult AddDriver([FromQuery]Driver model)
+        public IActionResult AddDriver([FromQuery]DriverModel model)
         {
-            _repository.Insert(model);
-            _repository.Save();
+            if (ModelState.IsValid)
+                _repository.Insert(_mapper.Map<Driver>(model));
+            else
+                return BadRequest();
+            
             return Ok();
         }
 
@@ -42,25 +49,24 @@ namespace CarRent.Controllers
         public IActionResult DeleteDriver(int id)
         {
             _repository.DeleteById(id);
-            _repository.Save();
             return Ok();
         }
 
         [HttpPut]
         [Route("[Action]/{id}")]
-        public IActionResult UpdateDriver(int id, [FromQuery] Driver model)
+        public IActionResult UpdateDriver([FromQuery] Driver model)
         {
-            Driver obj = _repository.FindById(id);
-            if (obj != null)
+            if (ModelState.IsValid)
             {
+                var obj = _repository.FindById(model.Id);
                 obj.Name = model.Name;
                 obj.StartDate = model.StartDate;
                 obj.RetireDate = model.RetireDate;
                 obj.CarId = model.CarId;
                 _repository.Update(obj);
-                _repository.Save();
             }
-            else return BadRequest();
+            else 
+                return BadRequest();
 
             return Ok();
         }

@@ -17,9 +17,9 @@ namespace Data.Repo
             _dbSet = _context.Set<T>();
         }
 
-        public IEnumerable<T> FindAll()
+        public IQueryable<T> FindAll()
         {
-            return _dbSet.ToList();
+            return _dbSet;
         }
         public T FindById(int id)
         {
@@ -28,22 +28,22 @@ namespace Data.Repo
         public void Insert(T obj)
         {
             _dbSet.Add(obj);
+            _context.SaveChanges();
         }
         public void Update(T obj)
         {
             _context.Entry(obj).State = EntityState.Modified;
+            _context.SaveChanges();
         }
         public void Delete(T obj)
         {
             _dbSet.Remove(obj);
+            _context.SaveChanges();
         }
         public void DeleteById(int id)
         {
             T obj = _dbSet.Find(id);
             _dbSet.Remove(obj);
-        }
-        public void Save()
-        {
             _context.SaveChanges();
         }
     }
