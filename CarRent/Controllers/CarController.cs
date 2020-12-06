@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Data;
-using Data.Models;
-using Data.Repo;
 using CarRent.Models;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
+using CarRent.Services;
 
 namespace CarRent.Controllers
 {
@@ -16,25 +13,23 @@ namespace CarRent.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private readonly IGenericRepository<Car> _repository;
-        private readonly IMapper _mapper;
-        public CarController(IGenericRepository<Car> repository, IMapper mapper)
+        private readonly ICarService _carService;
+        public CarController(ICarService service)
         {
-            _repository = repository;
-            _mapper = mapper;
+            _carService = service;
         }
         [HttpGet]
         [Route("[Action]")]
         public IEnumerable<CarModel> GetCars()
         {
-            return _mapper.Map<List<CarModel>>(_repository.FindAll());
+            return _carService.GetAllCars();
         }
         [HttpPost]
         [Route("[Action]")]
         public IActionResult AddCar([FromQuery] CarModel model)
         {
             if (ModelState.IsValid)
-                _repository.Insert(_mapper.Map<Car>(model));
+                _carService.InsertCar(model);
             else
                 return BadRequest();
             return Ok();
@@ -43,7 +38,7 @@ namespace CarRent.Controllers
         [Route("[Action]/{id}")]
         public IActionResult DeleteCar(int id)
         {
-            _repository.DeleteById(id);
+            _carService.DelCar(id);
             return Ok();
         }
 
@@ -53,12 +48,7 @@ namespace CarRent.Controllers
         {
             if (ModelState.IsValid)
             {
-                var car = _repository.FindById(model.Id);
-                car.Name = model.Name;
-                car.Mileage = model.Mileage;
-                car.PurchasePrice = model.PurchasePrice;
-                car.PurchaseDate = model.PurchaseDate;
-                _repository.Update(car);
+                _carService.UpdCar(model);
             }
             else return BadRequest();
             return Ok();
