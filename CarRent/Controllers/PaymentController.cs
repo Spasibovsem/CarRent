@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Data;
-using Data.Models;
-using Data.Repo;
 using CarRent.Models;
 using CarRent.Services;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
 
 namespace CarRent.Controllers
 {
