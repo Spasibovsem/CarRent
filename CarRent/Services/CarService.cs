@@ -9,7 +9,7 @@ using AutoMapper;
 
 namespace CarRent.Services
 {
-    public class CarService
+    public class CarService : ICarService
     {
         private readonly IGenericRepository<Car> _repository;
         private readonly IMapper _mapper;

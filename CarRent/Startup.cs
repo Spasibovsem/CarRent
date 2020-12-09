@@ -42,6 +42,9 @@ namespace CarRent
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<IPaymentService, PaymentService>();
+            services.AddTransient<ICarService, CarService>();
+            services.AddTransient<IDriverService, DriverService>();
+            services.AddTransient<IRepairService, RepairService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
