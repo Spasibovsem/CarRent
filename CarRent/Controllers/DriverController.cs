@@ -48,7 +48,7 @@ namespace CarRent.Controllers
         }
 
         [HttpPut]
-        [Route("[Action]/{id}")]
+        [Route("[Action]")]
         public IActionResult UpdateDriver([FromQuery] DriverModel model)
         {
             if (ModelState.IsValid)
