@@ -11,7 +11,7 @@ namespace CarRent.Services
         IEnumerable<RepairModel> RepairsByCarId(int id);
         void InsertRepair(RepairModel model);
         void DelRepair(int id);
-        void UpdRepair(RepairModel model);
+        void UpdRepair(RepairModel model, int id);
         RepairSumModel RepairSumByCar(int id);
     }
 }

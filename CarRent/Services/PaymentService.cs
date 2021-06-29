@@ -30,9 +30,9 @@ namespace CarRent.Services
             _context.Payments.Remove(obj);
             _context.SaveChanges();
         }
-        public void UpdPayment(PaymentModel model)
+        public void UpdPayment(PaymentModel model, int id)
         {
-            var obj = _context.Payments.Find(model.Id);
+            var obj = _context.Payments.Find(id);
             obj.CarId = model.CarId;
             obj.DriverId = model.DriverId;
             obj.PayDate = model.PayDate;
@@ -48,8 +48,8 @@ namespace CarRent.Services
         {
             return new PaySumModel
             {
-                CarId = id,
-                DriverId = null,
+                CarName = _context.Cars.Find(id).Name,
+                DriverName = null,
                 PaymentSum = _context.Payments
                     .Where(p => p.CarId == id)
                     .Sum(p => p.PaySum)
@@ -59,8 +59,8 @@ namespace CarRent.Services
         {
             return new PaySumModel
             {
-                DriverId = id,
-                CarId = null,
+                DriverName = _context.Drivers.Find(id).Name,
+                CarName = null,
                 PaymentSum = _context.Payments
                    .Where(p => p.DriverId == id)
                    .Sum(p => p.PaySum)
@@ -70,8 +70,8 @@ namespace CarRent.Services
         {
             return new PaySumModel
             {
-                CarId = carId,
-                DriverId = driverId,
+                CarName = _context.Cars.Find(carId).Name,
+                DriverName = _context.Drivers.Find(driverId).Name,
                 PaymentSum = _context.Payments
                     .Where(p => p.CarId == carId && p.DriverId == driverId)
                     .Sum(p => p.PaySum)

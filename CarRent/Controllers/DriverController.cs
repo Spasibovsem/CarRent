@@ -48,11 +48,11 @@ namespace CarRent.Controllers
         }
 
         [HttpPut]
-        [Route("[Action]")]
-        public IActionResult UpdateDriver([FromQuery] DriverModel model)
+        [Route("[Action]/{id}")]
+        public IActionResult UpdateDriver([FromQuery]DriverModel model, int id)
         {
             if (ModelState.IsValid)
-                _service.UpdDriver(model);
+                _service.UpdDriver(model, id);
             else
                 return BadRequest();
 

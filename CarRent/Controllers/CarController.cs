@@ -43,12 +43,12 @@ namespace CarRent.Controllers
         }
 
         [HttpPut]
-        [Route("[Action]")]
-        public IActionResult UpdateCar([FromQuery]CarModel model)
+        [Route("[Action]/{id}")]
+        public IActionResult UpdateCar([FromQuery]CarModel model, int id)
         {
             if (ModelState.IsValid)
             {
-                _carService.UpdCar(model);
+                _carService.UpdCar(model, id);
             }
             else return BadRequest();
             return Ok();
