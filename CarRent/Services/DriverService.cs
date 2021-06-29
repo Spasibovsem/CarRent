@@ -2,42 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Repo;
 using AutoMapper;
 using Data.Models;
 using CarRent.Models;
+using Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRent.Services
 {
     public class DriverService : IDriverService
     {
-        private readonly IGenericRepository<Driver> _repository;
+        private readonly CarRentContext _context;
         private readonly IMapper _mapper;
-        public DriverService(IGenericRepository<Driver> repository, IMapper mapper)
+        public DriverService(CarRentContext context, IMapper mapper)
         {
-            _repository = repository;
+            _context = context;
             _mapper = mapper;
         }
-        public void UpdDriver(DriverModel model)
+        public void UpdDriver(DriverModel model, int id)
         {
-            var obj = _repository.FindById(model.Id);
+            var obj = _context.Drivers.Find(id);
             obj.Name = model.Name;
             obj.StartDate = model.StartDate;
             obj.RetireDate = model.RetireDate;
             obj.CarId = model.CarId;
-            _repository.Update(obj);
+            _context.Entry(obj).State = EntityState.Modified;
+            _context.SaveChanges();
         }
         public void DelDriver(int id)
         {
-            _repository.DeleteById(id);
+            var obj = _context.Drivers.Find(id);
+            _context.Remove(obj);
+            _context.SaveChanges();
         }
         public void InsertDriver(DriverModel model)
         {
-            _repository.Insert(_mapper.Map<Driver>(model));
+            _context.Drivers.Add(_mapper.Map<Driver>(model));
+            _context.SaveChanges();
         }
         public IEnumerable<DriverModel> GetAllDrivers()
         {
-            return _mapper.Map<List<DriverModel>>(_repository.FindAll());
+            return _mapper.Map<List<DriverModel>>(_context.Drivers);
         }
     }
 }

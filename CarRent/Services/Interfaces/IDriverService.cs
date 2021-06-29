@@ -8,7 +8,7 @@ namespace CarRent.Services
 {
     public interface IDriverService
     {
-        void UpdDriver(DriverModel model);
+        void UpdDriver(DriverModel model, int id);
         void DelDriver(int id);
         void InsertDriver(DriverModel model);
         IEnumerable<DriverModel> GetAllDrivers();

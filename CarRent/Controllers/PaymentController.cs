@@ -49,15 +49,16 @@ namespace CarRent.Controllers
 
         [HttpPut]
         [Route("[Action]/{id}")]
-        public IActionResult UpdatePayment([FromQuery] PaymentModel model)
+        public IActionResult UpdatePayment(int id, [FromQuery]PaymentModel model)
         { 
             if(ModelState.IsValid)
-                _PaymentService.UpdPayment(model);
+                _PaymentService.UpdPayment(model, id);
             else 
                 return BadRequest();
 
             return Ok();
         }
+
         [HttpGet]
         [Route("[Action]/{id}")]
         public PaySumModel GetPaySumByCar(int id)

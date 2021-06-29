@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Data;
-using Data.Repo;
 using CarRent.Services;
 using Data.Models;
 using AutoMapper;
@@ -39,12 +38,12 @@ namespace CarRent
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<CarRentContext>(options => 
                 options.UseSqlServer(connection));
-
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            
             services.AddTransient<IPaymentService, PaymentService>();
             services.AddTransient<ICarService, CarService>();
             services.AddTransient<IDriverService, DriverService>();
             services.AddTransient<IRepairService, RepairService>();
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +54,11 @@ namespace CarRent
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json","Pet");
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();

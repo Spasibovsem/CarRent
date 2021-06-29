@@ -3,41 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Data.Models;
-using Data.Repo;
 using CarRent.Models;
 using AutoMapper;
+using Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRent.Services
 {
     public class CarService : ICarService
     {
-        private readonly IGenericRepository<Car> _repository;
         private readonly IMapper _mapper;
-        public CarService(IGenericRepository<Car> repository, IMapper mapper)
+        private readonly CarRentContext _context;
+        public CarService(CarRentContext context, IMapper mapper)
         {
-            _repository = repository;
+            _context = context;
             _mapper = mapper;
         }
-        public void UpdCar(CarModel model)
-        {
-            var obj = _repository.FindById(model.Id);
+        public void UpdCar(CarModel model, int id)
+        { 
+            var obj = _context.Cars.Find(id);
             obj.Name = model.Name;
             obj.Mileage = model.Mileage;
             obj.PurchaseDate = model.PurchaseDate;
             obj.PurchasePrice = model.PurchasePrice;
-            _repository.Update(obj);
+            _context.Entry(obj).State = EntityState.Modified;
+            _context.SaveChanges();
         }
         public void DelCar(int id)
         {
-            _repository.DeleteById(id);
+            var obj = _context.Cars.Find(id);
+            _context.Cars.Remove(obj);
+            _context.SaveChanges();
         }
         public void InsertCar(CarModel model)
         {
-            _repository.Insert(_mapper.Map<Car>(model));
+            _context.Cars.Add(_mapper.Map<Car>(model));
+            _context.SaveChanges();
         }
         public IEnumerable<CarModel> GetAllCars()
         {
-            return _mapper.Map<List<CarModel>>(_repository.FindAll());
+            return _mapper.Map<List<CarModel>>(_context.Cars);
         }
     }
 }
