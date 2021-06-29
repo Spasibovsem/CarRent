@@ -19,9 +19,9 @@ namespace CarRent.Services
             _context = context;
             _mapper = mapper;
         }
-        public void UpdCar(CarModel model)
+        public void UpdCar(CarModel model, int id)
         { 
-            var obj = _context.Cars.Find(model.Id);
+            var obj = _context.Cars.Find(id);
             obj.Name = model.Name;
             obj.Mileage = model.Mileage;
             obj.PurchaseDate = model.PurchaseDate;

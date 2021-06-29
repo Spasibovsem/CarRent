@@ -19,9 +19,9 @@ namespace CarRent.Services
             _context = context;
             _mapper = mapper;
         }
-        public void UpdDriver(DriverModel model)
+        public void UpdDriver(DriverModel model, int id)
         {
-            var obj = _context.Drivers.Find(model.Id);
+            var obj = _context.Drivers.Find(id);
             obj.Name = model.Name;
             obj.StartDate = model.StartDate;
             obj.RetireDate = model.RetireDate;

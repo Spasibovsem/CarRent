@@ -35,9 +35,9 @@ namespace CarRent.Services
             _context.Repairs.Remove(obj);
             _context.SaveChanges();
         }
-        public void UpdRepair(RepairModel model)
+        public void UpdRepair(RepairModel model, int id)
         {
-            var obj = _context.Repairs.Find(model.Id);
+            var obj = _context.Repairs.Find(id);
             obj.Title = model.Title;
             obj.CarId = model.CarId;
             obj.Mileage = model.Mileage;

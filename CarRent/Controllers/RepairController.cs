@@ -40,11 +40,11 @@ namespace CarRent.Controllers
         }
 
         [HttpPut]
-        [Route("[Action]")]
-        public IActionResult UpdateRepair([FromQuery] RepairModel model)
+        [Route("[Action]/{id}")]
+        public IActionResult UpdateRepair([FromQuery] RepairModel model, int id)
         {
             if (ModelState.IsValid)
-                _service.UpdRepair(model);
+                _service.UpdRepair(model, id);
             else
                 return BadRequest();
 

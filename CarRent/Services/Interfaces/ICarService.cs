@@ -8,7 +8,7 @@ namespace CarRent.Services
 {
     public interface ICarService
     {
-        void UpdCar(CarModel model);
+        void UpdCar(CarModel model, int id);
         void DelCar(int id);
         void InsertCar(CarModel model);
         IEnumerable<CarModel> GetAllCars();
