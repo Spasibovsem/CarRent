@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CarRent.Models;
-using CarRent.Services;
+using Data;
+using Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRent.Controllers
 {
@@ -13,18 +16,20 @@ namespace CarRent.Controllers
     [ApiController]
     public class DriverController : ControllerBase
     {
-        private readonly IDriverService _service;
+        private readonly CarRentContext _context;
+        private readonly IMapper _mapper;
 
-        public DriverController(IDriverService service)
+        public DriverController(CarRentContext context, IMapper mapper)
         {
-            _service = service;
+            _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("[Action]")]
         public IEnumerable<DriverModel> GetDrivers()
         {
-            return _service.GetAllDrivers();
+            return _mapper.Map<List<DriverModel>>(_context.Drivers);
         }
 
         [HttpPost]
@@ -32,7 +37,10 @@ namespace CarRent.Controllers
         public IActionResult AddDriver([FromQuery]DriverModel model)
         {
             if (ModelState.IsValid)
-                _service.InsertDriver(model);
+            {
+                _context.Drivers.Add(_mapper.Map<Driver>(model));
+                _context.SaveChanges();
+            }
             else
                 return BadRequest();
             
@@ -43,7 +51,9 @@ namespace CarRent.Controllers
         [Route("[Action]/{id}")]
         public IActionResult DeleteDriver(int id)
         {
-            _service.DelDriver(id);
+            var obj = _context.Drivers.Find(id);
+            _context.Remove(obj);
+            _context.SaveChanges();
             return Ok();
         }
 
@@ -52,7 +62,15 @@ namespace CarRent.Controllers
         public IActionResult UpdateDriver([FromQuery]DriverModel model, int id)
         {
             if (ModelState.IsValid)
-                _service.UpdDriver(model, id);
+            {
+                var obj = _context.Drivers.Find(id);
+                obj.Name = model.Name;
+                obj.StartDate = model.StartDate;
+                obj.RetireDate = model.RetireDate;
+                obj.CarId = model.CarId;
+                _context.Entry(obj).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
             else
                 return BadRequest();
 

@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using CarRent.Models;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CarRent.Services;
+using Data;
+using Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRent.Controllers
 {
@@ -13,23 +16,28 @@ namespace CarRent.Controllers
     [ApiController]
     public class CarController : ControllerBase
     {
-        private readonly ICarService _carService;
-        public CarController(ICarService service)
+        private readonly IMapper _mapper;
+        private readonly CarRentContext _context;
+        public CarController(CarRentContext context, IMapper mapper)
         {
-            _carService = service;
+            _context = context;
+            _mapper = mapper;
         }
         [HttpGet]
         [Route("[Action]")]
         public IEnumerable<CarModel> GetCars()
         {
-            return _carService.GetAllCars();
+            return _mapper.Map<List<CarModel>>(_context.Cars);
         }
         [HttpPost]
         [Route("[Action]")]
         public IActionResult AddCar([FromQuery] CarModel model)
         {
             if (ModelState.IsValid)
-                _carService.InsertCar(model);
+            { 
+                _context.Cars.Add(_mapper.Map<Car>(model)); 
+                _context.SaveChanges();
+            }
             else
                 return BadRequest();
             return Ok();
@@ -38,7 +46,9 @@ namespace CarRent.Controllers
         [Route("[Action]/{id}")]
         public IActionResult DeleteCar(int id)
         {
-            _carService.DelCar(id);
+            var obj = _context.Cars.Find(id);
+            _context.Cars.Remove(obj);
+            _context.SaveChanges();
             return Ok();
         }
 
@@ -48,9 +58,16 @@ namespace CarRent.Controllers
         {
             if (ModelState.IsValid)
             {
-                _carService.UpdCar(model, id);
+                var obj = _context.Cars.Find(id);
+                obj.Name = model.Name;
+                obj.Mileage = model.Mileage;
+                obj.PurchaseDate = model.PurchaseDate;
+                obj.PurchasePrice = model.PurchasePrice;
+                _context.Entry(obj).State = EntityState.Modified;
+                _context.SaveChanges();
             }
-            else return BadRequest();
+            else
+                return BadRequest();
             return Ok();
         }
     }
