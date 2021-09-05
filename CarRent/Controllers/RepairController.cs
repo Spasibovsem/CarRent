@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using CarRent.Models;
 using System.Threading.Tasks;
+using AutoMapper;
+using Data;
+using Data.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using CarRent.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRent.Controllers
 {
@@ -13,18 +16,20 @@ namespace CarRent.Controllers
     [ApiController]
     public class RepairController : ControllerBase
     {
-        private readonly IRepairService _service;
+        private readonly CarRentContext _context;
+        private readonly IMapper _mapper;
 
-        public RepairController(IRepairService service)
+        public RepairController(CarRentContext context, IMapper mapper)
         {
-            _service = service;
+            _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [Route("[Action]/{id}")]
         public IEnumerable<RepairModel> GetRepairsByCarId(int id)
         {
-            return _service.RepairsByCarId(id);
+            return _mapper.Map<List<RepairModel>>(_context.Repairs.Where(r => r.CarId == id));
         }
 
         [HttpPost]
@@ -32,7 +37,10 @@ namespace CarRent.Controllers
         public IActionResult AddRepair([FromQuery] RepairModel model)
         {
             if (ModelState.IsValid)
-                _service.InsertRepair(model);
+            {
+                _context.Add(_mapper.Map<Repair>(model));
+                _context.SaveChanges();
+            }
             else
                 return BadRequest();
 
@@ -44,7 +52,16 @@ namespace CarRent.Controllers
         public IActionResult UpdateRepair([FromQuery] RepairModel model, int id)
         {
             if (ModelState.IsValid)
-                _service.UpdRepair(model, id);
+            {
+                var obj = _context.Repairs.Find(id);
+                obj.Title = model.Title;
+                obj.CarId = model.CarId;
+                obj.Mileage = model.Mileage;
+                obj.RepairDate = model.RepairDate;
+                obj.RepairPrice = model.RepairPrice;
+                _context.Entry(obj).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
             else
                 return BadRequest();
 
@@ -55,16 +72,18 @@ namespace CarRent.Controllers
         [Route("[Action]/{id}")]
         public IActionResult DeleteRepair(int id)
         {
-            _service.DelRepair(id);
+            var obj = _context.Repairs.Find(id);
+            _context.Repairs.Remove(obj);
+            _context.SaveChanges();
             return Ok();
         }
 
-        [HttpGet]
-        [Route("[Action]/{id}")]
-        public RepairSumModel GetRepairSumByCar(int id)
-        {
-            return _service.RepairSumByCar(id);
-        }
+        //[HttpGet]
+        //[Route("[Action]/{id}")]
+        //public RepairSumModel GetRepairSumByCar(int id)
+        //{
+        //    return _service.RepairSumByCar(id);
+        //}
     }
 }
 

@@ -13,36 +13,10 @@ namespace CarRent.Services
     public class PaymentService : IPaymentService
     {
         private readonly CarRentContext _context;
-        private readonly IMapper _mapper;
-        public PaymentService(CarRentContext context, IMapper mapper)
+
+        public PaymentService(CarRentContext context)
         {
             _context = context;
-            _mapper = mapper;
-        }
-        public void InsertPayment(PaymentModel model)
-        {
-            _context.Payments.Add(_mapper.Map<Payment>(model));
-            _context.SaveChanges();
-        }
-        public void DelPayment(int id)
-        {
-            var obj = _context.Payments.Find(id);
-            _context.Payments.Remove(obj);
-            _context.SaveChanges();
-        }
-        public void UpdPayment(PaymentModel model, int id)
-        {
-            var obj = _context.Payments.Find(id);
-            obj.CarId = model.CarId;
-            obj.DriverId = model.DriverId;
-            obj.PayDate = model.PayDate;
-            obj.PaySum = model.PaySum;
-            _context.Entry(obj).State = EntityState.Modified;
-            _context.SaveChanges();
-        }
-        public IEnumerable<PaymentModel> PaymentsByCar(int id)
-        {
-            return _mapper.Map<List<PaymentModel>>(_context.Payments.Where(p => p.CarId == id));
         }
         public PaySumModel SumByCar(int id)
         {
