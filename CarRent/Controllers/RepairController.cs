@@ -27,9 +27,9 @@ namespace CarRent.Controllers
 
         [HttpGet]
         [Route("[Action]/{id}")]
-        public IEnumerable<RepairModel> GetRepairsByCarId(int id)
+        public IActionResult GetRepairsByCarId(int id)
         {
-            return _mapper.Map<List<RepairModel>>(_context.Repairs.Where(r => r.CarId == id));
+            return Ok(_mapper.Map<List<RepairModel>>(_context.Repairs.Where(r => r.CarId == id)));
         }
 
         [HttpPost]
@@ -75,6 +75,7 @@ namespace CarRent.Controllers
             var obj = _context.Repairs.Find(id);
             _context.Repairs.Remove(obj);
             _context.SaveChanges();
+
             return Ok();
         }
 

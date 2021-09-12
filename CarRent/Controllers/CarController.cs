@@ -25,9 +25,9 @@ namespace CarRent.Controllers
         }
         [HttpGet]
         [Route("[Action]")]
-        public IEnumerable<CarModel> GetCars()
+        public IActionResult GetCars()
         {
-            return _mapper.Map<List<CarModel>>(_context.Cars);
+            return Ok(_mapper.Map<List<CarModel>>(_context.Cars));
         }
         [HttpPost]
         [Route("[Action]")]

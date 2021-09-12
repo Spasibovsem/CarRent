@@ -30,9 +30,9 @@ namespace CarRent.Controllers
 
         [HttpGet]
         [Route("[Action]/{id}")]
-        public IEnumerable<PaymentModel> GetPaymentsByCar(int id)
+        public IActionResult GetPaymentsByCar(int id)
         {
-            return _mapper.Map<List<PaymentModel>>(_context.Payments.Where(p => p.CarId == id));
+            return Ok(_mapper.Map<List<PaymentModel>>(_context.Payments.Where(p => p.CarId == id)));
 
         }
 

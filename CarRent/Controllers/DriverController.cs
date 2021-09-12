@@ -27,9 +27,9 @@ namespace CarRent.Controllers
 
         [HttpGet]
         [Route("[Action]")]
-        public IEnumerable<DriverModel> GetDrivers()
+        public IActionResult GetDrivers()
         {
-            return _mapper.Map<List<DriverModel>>(_context.Drivers);
+            return Ok(_mapper.Map<List<DriverModel>>(_context.Drivers));
         }
 
         [HttpPost]
