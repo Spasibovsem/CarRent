@@ -38,11 +38,7 @@ namespace CarRent
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<CarRentContext>(options => 
                 options.UseSqlServer(connection));
-            
-            services.AddTransient<IPaymentService, PaymentService>();
-            services.AddTransient<ICarService, CarService>();
-            services.AddTransient<IDriverService, DriverService>();
-            services.AddTransient<IRepairService, RepairService>();
+
             services.AddSwaggerGen();
         }
 

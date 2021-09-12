@@ -12,9 +12,6 @@ namespace CarRent.Services
         PaySumModel SumByCar(int id);
         PaySumModel SumByDriver(int id);
         PaySumModel SumByDriverCar(int driverId, int carId);
-        void UpdPayment(PaymentModel model, int id);
-        void DelPayment(int id);
-        void InsertPayment(PaymentModel model);
-        IEnumerable<PaymentModel> PaymentsByCar(int id);
+        
     }
 }

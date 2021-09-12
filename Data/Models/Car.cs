@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Data.Models
@@ -10,6 +11,8 @@ namespace Data.Models
         public string Name { get; set; }
         public int Mileage { get; set; }
         public int PurchasePrice { get; set; }
+
+        [Column(TypeName = "date")]
         public DateTime PurchaseDate { get; set; }
 
         public ICollection<Repair> Repairs { get; set; }
