@@ -22,23 +22,26 @@ namespace CarRent
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public readonly IConfiguration _configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             
             services.AddControllers();
+            services.AddAuthentication();
+            services.AddAuthorization();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            string connection = Configuration.GetConnectionString("DefaultConnection");
+            var connection = _configuration.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<CarRentContext>(options => 
                 options.UseSqlServer(connection));
-
+            
             services.AddSwaggerGen();
         }
 
@@ -59,8 +62,9 @@ namespace CarRent
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
